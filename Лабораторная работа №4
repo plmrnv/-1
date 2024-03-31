@@ -1,0 +1,222 @@
+<Window x:Class="WpfApplDemo2018.View.WindowNewStudents"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+2
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ mc:Ignorable="d"
+ Height="270" Width="300">
+ <Grid>
+ <Grid.RowDefinitions>
+ <RowDefinition Height="40*"/>
+ <RowDefinition Height="40*"/>
+ <RowDefinition Height="40*"/>
+ <RowDefinition Height="40*"/>
+ <RowDefinition Height="40*"/>
+ <RowDefinition Height="50*"/>
+ </Grid.RowDefinitions>
+ <Grid.ColumnDefinitions>
+ <ColumnDefinition Width="40*"/>
+ <ColumnDefinition Width="75*"/>
+ </Grid.ColumnDefinitions>
+ <TextBlock Grid.Row="0" Grid.Column="0"
+ Text="Код:" HorizontalAlignment="Right"
+ VerticalAlignment="Center" Margin="5"/>
+ <TextBlock Grid.Row="1" Grid.Column="0"
+ Text="Оценка:" HorizontalAlignment="Right"
+ VerticalAlignment="Center" Margin="5"/>
+ <TextBlock Grid.Row="2" Grid.Column="0"
+ Text="Фамилия:" HorizontalAlignment="Right"
+ VerticalAlignment="Center" Margin="5"/>
+ <TextBlock Grid.Row="3" Grid.Column="0"
+ Text="Имя:" HorizontalAlignment="Right"
+ VerticalAlignment="Center" Margin="5"/>
+ <TextBlock Grid.Row="4" Grid.Column="0"
+ Text="Дата рождения:" HorizontalAlignment="Right"
+ VerticalAlignment="Center" Margin="5"/>
+ <TextBox x:Name="TbId" Grid.Row="0" Grid.Column="1"
+ Text="{Binding Id}" Height="20" Width="50"
+ HorizontalAlignment="Left" VerticalAlignment="Center"
+ Margin="5" IsEnabled="False"/>
+ <TextBox x:Name="TbLastName" Grid.Row="2" Grid.Column="1"
+ Text="{Binding LastName}"
+ Height="20" Width="130"
+ HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+ <TextBox x:Name="TbFirstName" Grid.Row="3" Grid.Column="1"
+ Text="{Binding FirstName}"
+ Height="20" Width="130"
+ HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+ <ComboBox x:Name="CbRole" Grid.Row="1" Grid.Column="1" Height="20" Width="130"
+ HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"
+ DisplayMemberPath="NameProgress"/>
+ <DatePicker x:Name="ClBirthday" Grid.Row="4" Grid.Column="1"
+ SelectedDate="{Binding Birthday, Margin="5,8,0,7"
+ Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+ HorizontalAlignment="Left" VerticalAlignment="Center" Width="130"/>
+ <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5"
+ Orientation="Horizontal"
+ HorizontalAlignment="Right">
+ <Button x:Name="BtSave" Content="Сохранить" Height="25"
+ HorizontalAlignment="Right" VerticalAlignment="Top"
+ Margin="5,10,10,5"
+ Click="BtSave_Click"/>
+ <Button x:Name="BtCansel" Content="Отменить" Height="25"
+ HorizontalAlignment="Right" VerticalAlignment="Top"
+ Margin="5,10,10,5" IsCancel="True"/>
+ </StackPanel>
+ </Grid>
+</Window>
+public Stugents CopyFromStudentsDPO(StudentsDPO p)
+{
+ ProgressViewModel vmProgress = new ProgressViewModel();
+ int progressId = 0;
+ foreach (var r in vmProgress.ListProgress)
+ {
+ if (r.NameProgress == p.Progress)
+ {
+ progressId = p.Id;
+break;
+ }
+ }
+ if (progressId != 0)
+ {
+ this.Id = p.Id;
+ this.ProgressId = progressId;
+ this.FirstName = p.FirstName;
+ this.LastName = p.LastName;
+ this.Birthday = p.Birthday;
+ }
+ return this;
+ }
+public StudentsDPO CopyFromStudents(Students students)
+ {
+ StudentsDPO studDPO = new StudentsDPO();
+ ProgressViewModel vmProgress = new ProgressViewModel();
+ string progress= string.Empty;
+ foreach (var r in vmProgress.ListProgress)
+ {
+ if (p.Id == students.ProgressId)
+ {
+ progress= r.NameProgress;
+break;
+ }
+ }
+ if (progress != string.Empty)
+ {
+ studDPO.Id = students.Id;
+ studDPO.Progress = progress;
+ studDPO.FirstName = students.FirstName;
+ studDPO.LastName = students.LastName;
+ studDPO.Birthday = students.Birthday;
+ }
+ return studDPO;
+ }
+public WindowStudents()
+ {
+ InitializeComponent();
+ vmStudents = new StudentsViewModel();
+ vmProgress = new ProgressViewModel();
+ progresss = vmProgress.ListProgress.ToList();
+ // Формирование данных для отображения студентов с успеваемостью
+ // на базе коллекции класса ListStudents<Students>
+ studentsDPO = new ObservableCollection<StudentsDPO>();
+ foreach (var students in vmStudents.ListStudents)
+ {
+ StudentsDPO p = new StudentsDPO();
+ p = p.CopyFromStudents(students);
+ studentssDPO.Add(p);
+ }
+ lvEmployee.ItemsSource = studentsDPO;
+ }
+private void btnAdd_Click(object sender, RoutedEventArgs e)
+ {
+ WindowNewStudents wnStudents = new WindowNewStudents
+ {
+ Title = "Новый студент",
+ Owner = this
+ };
+ // формирование кода новой оценки студента
+ int maxIdStudents = vmStudents.MaxId() + 1;
+ StudentsDPO stud = new StudentsDPO
+ {
+ Id = maxIdPerson,
+ Birthday = DateTime.Now
+ };
+ wnStudents.DataContext = stud;
+ wnStudents.CbProgress.ItemsSource = progresss;
+ if (wnStudents.ShowDialog() == true)
+ {
+ Progress r = (Progress)wnProgress.CbProgress.SelectedValue;
+ stud.Progress = r.NameProgress;
+ studentsDPO.Add(stud);
+ // добавление новой оценки студента в коллекцию ListStudents<Students>
+ Students p = new Students();
+ p = p.CopyFromStudentsDPO(stud);
+ vmStudents.ListStudents.Add(p);
+ }
+ }
+private void btnEdit_Click(object sender, RoutedEventArgs e)
+ {
+ WindowNewStudents wnStudents = new WindowNewStudents
+ {
+ Title = "Редактирование данных",
+ Owner = this
+ };
+ StudentsDPO studDPO = (StudentsDPO)lvStudents.SelectedValue;
+ StudentsDPO tempStudDPO; // временный класс для редактирования
+ if (studDPO != null)
+ {
+ tempStudDPO = studDPO.ShallowCopy();
+ wnStudents.DataContext = tempStudDPO;
+ wnStudents.CbProgress.ItemsSource = progresss;
+ wnStudents.CbProgress.Text = tempStudDPO.Rogress;
+ if (wnStudents.ShowDialog() == true)
+ {
+ // перенос данных из временного класса в класс отображения данных
+Progress r = (Progress)wnStudents.CbProgress.SelectedValue;
+studDPO.Progress = r.NameProgress;
+studDPO.FirstName = tempStudDPO.FirstName;
+studDPO.LastName = tempStudDPO.LastName;
+studDPO.Birthday = tempStudDPO.Birthday;
+ lvStudents.ItemsSource = null;
+lvStudents.ItemsSource = studentsDPO;
+ // перенос данных из класса отображения данных в класс Person
+FindStu finder = new FindStudents(studDPO.Id);
+ List<Students> listStudents = vmStudents.ListStudents.ToList();
+Students p = listStudents.Find(new Predicate<Students>(finder.StudentsPredicate));
+ p = p.CopyFromStudentsDPO(studDPO);
+ }
+ }
+ else
+ {
+ MessageBox.Show("Необходимо выбрать студента для редактированния",
+ "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+ }
+
+ }
+При удалении студента создадим для кнопки
+Удалить окна WindowsStudents  код обработчика btnEdit_Click.
+private void btnDelete_Click(object sender, RoutedEventArgs e)
+ {
+ StudentsDPO students = (StudentsDPO)lvStudents.SelectedItem;
+ if (students != null)
+ {
+ MessageBoxResult result = MessageBox.Show("Удалить данные по студента:
+\n" + students.LastName +" "+students.FirstName,
+ "Предупреждение", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+ if (result == MessageBoxResult.OK)
+ {
+ // удаление данных в списке отображения данных
+studentsDPO.Remove(students);
+ // удаление данных в списке классов ListStudents<Students>
+Students stud= new Students();
+ stud = stud.CopyFromStudentsDPO(students);
+vmStudents.ListStudents.Remove(stud);
+ }
+ }
+ else
+ {
+ MessageBox.Show("Необходимо выбрать данные по студенту для удаления",
+ "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+ }
+ }
