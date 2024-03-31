@@ -1,0 +1,159 @@
+XAML-код окна WindowsStudents
+
+<Window x:Class="WpfApplDemo2018.View.WindowStudents"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:local="clr-namespace:WpfApplDemo2018.View"
+ mc:Ignorable="d"
+ Title="Cтуденты" Height="300" Width="500">
+ <StackPanel>
+ <ListView x:Name="lvStudents">
+ <ListView.View>
+ <GridView>
+ <GridView.Columns>
+ <GridViewColumn Header="Код" Width="50" />
+ <GridViewColumn Header="Фамилия" />
+ <GridViewColumn Header="Имя" />
+ <GridViewColumn Header="Дата рождения" />
+ </GridView.Columns>
+ </GridView>
+ </ListView.View>
+ </ListView>
+
+ </StackPanel>
+</Window>
+C# код класса WindowStudents
+
+
+using System.Windows;
+using WpfApplDemo2018.ViewModel;
+namespace WpfApplDemo2018.View
+{
+ /// <summary>
+ /// Логика взаимодействия для WindowEmployee.xaml
+ /// </summary>
+ public partial class WindowStudents : Window
+ {
+ public WindowStudents()
+ {
+ InitializeComponent();
+ StudentsViewModel vmStudents = new StudentsViewModel();
+ lvStudents.ItemsSource = vmStudents.ListStudents;
+ }
+ }
+} 
+StugentsViewModel vmStudents = new StudentsViewModel();
+<GridViewColumn Header="Код" Width="50"
+ DisplayMemberBinding="{Binding Id}"/>
+<GridViewColumn Header="Фамилия"
+ DisplayMemberBinding="{Binding LastName}"/>
+<GridViewColumn Header="Имя"
+ DisplayMemberBinding="{Binding FirstName}"/>
+<GridViewColumn Header="Дата рождения"
+ DisplayMemberBinding="{Binding Birthday}"/> 
+<Window x:Class="WpfApplDemo2018.View.WindowProgress"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:local="clr-namespace:WpfApplDemo2018.View"
+ mc:Ignorable="d"
+ Title="Успеваемость" Height="300" Width="300">
+ <StackPanel Background="#FFD8D8D8">
+ <Label Margin="5" HorizontalAlignment="Center">Список успеваемости студентов</Label>
+ <ListView x:Name="lvProgress" Background="#FFD3CDCD">
+ <ListView.View >
+ <GridView>
+ <GridView.Columns>
+ <GridViewColumn Header="Код" Width="50"
+ DisplayMemberBinding="{Binding Id}"/>
+ <GridViewColumn Header="Балл успеваемости"
+ DisplayMemberBinding="{Binding NameRole}"/>
+ </GridView.Columns>
+ </GridView>
+ </ListView.View>
+ </ListView>
+ </StackPanel>
+</Window>
+using System.Windows;
+using WpfApplDemo2018.ViewModel;
+namespace WpfApplDemo2018.Helper
+{
+ public class FindProgress
+ {
+ int id;
+ public FindProgress(int id)
+ {
+ this.id = id;
+ }
+ public bool ProgressPredicate(Progress progress )
+ {
+ return progress.Id == id;
+ }
+ }
+}
+using System;
+using System.Collections.Generic;
+namespace WpfApplDemo2018.Model
+{
+ public class StudentsDPO
+ {
+ public int Id { get; set; }
+ public string FirstName { get; set; }
+ public string LastName { get; set; }
+ public DateTime Birthday { get; set; }
+ public StudentsDPO() { }
+ public StugentsDPO(int id, string firstName, string lastName, DateTime
+birthday)
+ {
+ this.Id = id;
+ this.FirstName = firstName;
+ this.LastName = lastName;
+ this.Birthday = birthday;
+ }
+ }
+}
+using System.Windows;
+using WpfApplDemo2018.Helper;
+using WpfApplDemo2018.ViewModel;
+using WpfApplDemo2018.Model;
+using System.Collections.Generic;
+using System;
+using System.Collections.ObjectModel;
+namespace WpfApplDemo2018.View
+{
+ /// <summary>
+ /// Логика взаимодействия для WindowStudents.xaml
+ /// </summary>
+ public partial class WindowStudents : Window
+ {
+ public WindowStudents()
+ {
+ InitializeComponent();
+ StudentsViewModel vmStudents = new StudentsViewModel();
+ ProgressViewModel vmProgress = new ProgressViewModel();
+ List<Progress> progress = new List<Progress>();
+ foreach(Progress r in vmProgress.ListProgress)
+ {
+ progress.Add(r);
+ }
+ ObservableCollection<StudentsDPO> students = new ObservableCollection<StudentsDPO>();
+ FindProgress finder;
+ foreach (var p in vmStudents.ListStudents)
+ {
+ finder = new FindProgress(p.ProgressId);
+ Progress prog = progress.Find(new Predicate<Progress>(finder.ProgressPredicate));
+ students.Add(new StudentsDPO
+ {
+ Id = p.Id,
+FirstName = p.FirstName,
+LastName = p.LastName,
+Birthday = p.Birthday
+ });
+ }
+ lvStudents.ItemsSource = students;
+ }
+ }
+}
