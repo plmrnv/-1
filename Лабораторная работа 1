@@ -1,0 +1,158 @@
+using System;
+namespace WpfApplDemo2018.Model
+{    public class Students
+    {
+        public int Id { get; set; }       
+         public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime Birthday { get; set; }
+        public Students() { }
+        public Students(int id, string firstName, string lastName, DateTime
+       birthday)
+        {
+            this.Id = id;
+            this.FirstName = firstName;
+            this.LastName = lastName; 
+           this.Birthday = birthday;
+        }    }
+}
+
+
+
+
+
+using System;
+namespace WpfApplDemo2018.Model
+{    public class Progress
+    {
+        public int Id { get; set; }
+        public int result { get; set; }
+        public Progress() { }
+ public Progress(int id, int result)
+        {
+            this.Id = id;
+            this.result = result;
+        } 
+   }
+}
+using System; 
+using System.Collections.ObjectModel; 
+using WpfApplDemo2018.Model; 
+namespace WpfApplDemo2018.ViewModel 
+{ 
+    public class StudentsViewModel 
+    { 
+        public ObservableCollection<Students> ListStudents { get; set; } = 
+        new ObservableCollection<Students>(); 
+        public StudentsViewModel() 
+        { 
+            this.ListStudents.Add( 
+            new Students 
+            { 
+                Id = 1, 
+                FirstName = "Иван", 
+                LastName = "Иванов", 
+                Birthday = new DateTime(1999, 02, 28) 
+            
+            }); 
+            this.ListStudents.Add( 
+            new Students 
+            { 
+                Id = 2, 
+                FirstName = "Петр", 
+                LastName = "Петров", 
+                Birthday = new DateTime(2000, 03, 20) 
+            }); 
+            this.ListStudents.Add( 
+            new Students 
+            { 
+                Id = 3, 
+                FirstName = "Виктор", 
+                LastName = "Викторов", 
+                Birthday = new DateTime(2002, 04, 15) 
+            }); 
+            this.ListStudents.Add( 
+            new Students 
+            { 
+                Id = 4, 
+                FirstName = "Сидор", 
+                LastName = "Сидоров", 
+                Birthday = new DateTime(1999, 05, 10) 
+            }); 
+        } 
+    } 
+}
+
+
+
+
+using System; 
+using System.Collections.ObjectModel; 
+using System.Data; 
+ 
+namespace WpfApplDemo2018.ViewModel 
+{ 
+    public class ProgressViewModel 
+    { 
+        public ObservableCollection<Progress> ListProgress { get; set; } = new ObservableCollection<Progress>(); 
+        public ProgressViewModel() 
+        { 
+            this.ListProgress.Add(new Progress 
+            { 
+                Id = 1, 
+                result = "4.8" 
+            }); 
+            this.ListProgress.Add(new Progress 
+            { 
+                Id = 2, 
+               result = "4.6" 
+            }); 
+            this.ListProgress.Add(new Progress 
+            { 
+                Id = 3,  
+                result = "5" 
+            }); 
+        } 
+    } 
+}
+<Window x:Class="WpfApplDemo2018.MainWindow" 
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+ xmlns:local="clr-namespace:WpfApplDemo2018" 
+ mc:Ignorable="d" 
+ Title="MainWindow" Height="350" Width="525"> 
+    <Grid> 
+        <Menu> 
+            <MenuItem x:Name="Students" Header="Студенты" 
+Click="Students_OnClick"></MenuItem> 
+            <MenuItem x:Name="Progress" Header="Успеваемость" Click="Progress_OnClick"></MenuItem> 
+        </Menu> 
+    </Grid> 
+</Window>
+using System.Windows; 
+using WpfApplDemo2018.View; 
+namespace WpfApplDemo2018 
+{ 
+    /// <summary> 
+    /// Логика взаимодействия для MainWindow.xaml 
+    /// </summary> 
+    public partial class MainWindow : Window 
+    { 
+        public MainWindow() 
+        { 
+            InitializeComponent(); 
+        } 
+        private void Students_OnClick(object sender, RoutedEventArgs e) 
+        { 
+            WindowStudents wStudents = new WindowStudents(); 
+            wStudents.Show(); 
+        } 
+        private void Progress_OnClick(object sender, RoutedEventArgs e) 
+        { 
+            WindowProgress wProgress = new WindowProgress(); 
+            wProgress.Show(); 
+        } 
+    } 
+}
